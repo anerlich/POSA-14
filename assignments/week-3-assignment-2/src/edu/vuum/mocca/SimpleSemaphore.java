@@ -20,6 +20,9 @@ public class SimpleSemaphore {
                             boolean fair)
     { 
         // TODO - you fill in here
+    	mCountPermitsAvailable = permits;
+    	mLock = new ReentrantLock(fair);
+    	mCondPermitsAvailable = mLock.newCondition();
     }
 
     /**
@@ -28,6 +31,15 @@ public class SimpleSemaphore {
      */
     public void acquire() throws InterruptedException {
         // TODO - you fill in here
+    	mLock.lock();
+    	try {
+    		while (mCountPermitsAvailable <= 0) {
+    			mCondPermitsAvailable.await();
+    		}
+    		mCountPermitsAvailable--;
+    	} finally {
+    		mLock.unlock();
+    	}
     }
 
     /**
@@ -36,6 +48,15 @@ public class SimpleSemaphore {
      */
     public void acquireUninterruptibly() {
         // TODO - you fill in here
+    	mLock.lock();
+    	try {
+    		while (mCountPermitsAvailable <= 0) {
+    			mCondPermitsAvailable.awaitUninterruptibly();
+    		}
+    		mCountPermitsAvailable--;
+    	} finally {
+    		mLock.unlock();
+    	}
     }
 
     /**
@@ -43,6 +64,14 @@ public class SimpleSemaphore {
      */
     void release() {
         // TODO - you fill in here
+    	mLock.lock();
+    	try {
+    		mCountPermitsAvailable++;
+    		mCondPermitsAvailable.signal();
+    	} finally {
+    		mLock.unlock();
+    	}
+	
     }
     
     /**
@@ -50,23 +79,30 @@ public class SimpleSemaphore {
      */
     public int availablePermits(){
     	// TODO - you fill in here
-    	return 0; // You will change this value. 
+    	int intPermits = 0;
+    	mLock.lock();
+    	intPermits = mCountPermitsAvailable;
+    	mLock.unlock();
+    	return intPermits; // You will change this value. 
     }
     
     /**
      * Define a ReentrantLock to protect the critical section.
      */
     // TODO - you fill in here
+    ReentrantLock mLock;
 
     /**
      * Define a ConditionObject to wait while the number of
      * permits is 0.
      */
     // TODO - you fill in here
+    Condition mCondPermitsAvailable;
 
     /**
      * Define a count of the number of available permits.
      */
     // TODO - you fill in here
+    int mCountPermitsAvailable = 0;
 }
 

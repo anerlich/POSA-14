@@ -45,6 +45,7 @@ public class PalantirManager {
          * Use the "fair" policy.
          */
         mAvailable = new SimpleSemaphore(mMaxPalantiri, true);
+        System.out.println(Thread.currentThread().getName() + "Permits " + mAvailable.availablePermits());        
     }
 
     /**
@@ -53,6 +54,7 @@ public class PalantirManager {
      */
     public Palantir acquirePalantir() {
         mAvailable.acquireUninterruptibly();
+        System.out.println(Thread.currentThread().getName() + " Acquire: Permits " + mAvailable.availablePermits());
         return getNextAvailablePalantir();
     }
 
@@ -63,6 +65,7 @@ public class PalantirManager {
     public void releasePalantir(Palantir palantir) {
         if (markAsUnused(palantir))
             mAvailable.release();
+        System.out.println(Thread.currentThread().getName() + " Release: Permits " + mAvailable.availablePermits());
     }
 
     /**
