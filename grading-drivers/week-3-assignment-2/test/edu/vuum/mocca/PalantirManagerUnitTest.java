@@ -21,10 +21,10 @@ import org.junit.Test;
  */
 public class PalantirManagerUnitTest {
     /**
-     * If this is set to true in then lots of debugging output will be
+     * If this is set to true then lots of debugging output will be
      * generated.
      */
-    public static boolean diagnosticsEnabled = true;
+    public static boolean diagnosticsEnabled = false;
 
     /**
      * Total number of times each Palantir user gets to gaze into a
@@ -233,13 +233,9 @@ public class PalantirManagerUnitTest {
             if (diagnosticsEnabled)            
                 System.out.println("Finishing PalantirManagerTest");
         } catch (Exception e) {
-            if (diagnosticsEnabled)
-        	System.out.println("A " 
-                                   + e.getMessage() 
-                                   + " Exception was thrown");
-            fail("A "
+            fail("The Exception "
                  + e.getMessage()
-                 + " Exception was thrown");
+                 + " was thrown");
         }
     }
 
