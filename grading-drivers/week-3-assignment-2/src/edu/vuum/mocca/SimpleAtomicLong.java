@@ -24,12 +24,14 @@ class SimpleAtomicLong
      * The ReentrantReadWriteLock used to serialize access to mValue.
      */
     // TODO - add the implementation
+    private ReentrantReadWriteLock mValueLock = new ReentrantReadWriteLock();
 
     /**
      * Creates a new SimpleAtomicLong with the given initial value.
      */
     public SimpleAtomicLong(long initialValue) {
         // TODO - you fill in here
+    	mValue = initialValue;
     }
 
     /**
@@ -39,6 +41,16 @@ class SimpleAtomicLong
      */
     public long get() {
         // TODO - you fill in here
+    	long retVal;
+    	try{
+    		mValueLock.readLock().lock();
+    		retVal = mValue;
+    	}
+    	finally
+    	{
+    		mValueLock.readLock().unlock();
+    	}
+    	return retVal;
     }
 
     /**
@@ -48,6 +60,17 @@ class SimpleAtomicLong
      */
     public long decrementAndGet() {
         // TODO - you fill in here
+    	long retVal;
+    	try
+    	{
+    		mValueLock.writeLock().lock();
+    		retVal = --mValue;
+    	}
+    	finally
+    	{
+    		mValueLock.writeLock().unlock();
+    	}
+    	return retVal;
     }
 
     /**
@@ -57,6 +80,17 @@ class SimpleAtomicLong
      */
     public long getAndIncrement() {
         // TODO - you fill in here
+    	long retVal;
+    	try
+    	{
+    		mValueLock.writeLock().lock();
+    		retVal = mValue++;
+    	}
+    	finally
+    	{
+    		mValueLock.writeLock().unlock();
+    	}
+    	return retVal;
     }
 
     /**
@@ -66,6 +100,18 @@ class SimpleAtomicLong
      */
     public long getAndDecrement() {
         // TODO - you fill in here
+    	long retVal;
+    	try
+    	{
+    		mValueLock.writeLock().lock();
+    		retVal = mValue--;
+    		
+    	}
+    	finally
+    	{
+    		mValueLock.writeLock().unlock();
+    	}
+    	return retVal;
     }
 
     /**
@@ -75,6 +121,17 @@ class SimpleAtomicLong
      */
     public long incrementAndGet() {
         // TODO - you fill in here
+    	long retVal;
+    	try
+    	{
+    		mValueLock.writeLock().lock();
+    		retVal = ++mValue;
+    	}
+    	finally
+    	{
+    		mValueLock.writeLock().unlock();
+    	}
+    	return retVal;
     }
 }
 
