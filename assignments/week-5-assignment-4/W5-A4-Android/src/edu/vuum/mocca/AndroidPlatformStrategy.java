@@ -85,12 +85,6 @@ public class AndroidPlatformStrategy extends PlatformStrategy
 		}
     }
 
-    /** Returns the platform name in a String. */
-    public String platformName() 
-    {
-        return System.getProperty("java.specification.vendor");
-    }
-
     /** 
      * Error log formats the message and displays it for the
      * debugging purposes.
