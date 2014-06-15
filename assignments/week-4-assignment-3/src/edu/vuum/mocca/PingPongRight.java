@@ -98,17 +98,17 @@ public class PingPongRight {
         }
 
         /**
-         * Method for acquiring the appropriate SimpleSemaphore.
+         * Hook method for ping/pong acquire.
          */
-        private void acquire() {
+        void acquire() {
             // TODO fill in here
             mSemas[FIRST_SEMA].acquireUninterruptibly();
         }
 
         /**
-         * Method for releasing the appropriate SimpleSemaphore.
+         * Hook method for ping/pong release.
          */
-        private void release() {
+        void release() {
             // TODO fill in here
             mSemas[SECOND_SEMA].release();
         }
