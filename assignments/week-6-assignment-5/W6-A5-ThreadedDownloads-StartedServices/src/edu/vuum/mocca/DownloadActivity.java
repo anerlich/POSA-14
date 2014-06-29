@@ -68,7 +68,7 @@ public class DownloadActivity extends DownloadBase {
     	
     	// Handle any messages that get sent to this Handler
     	@Override
-		public void handleMessage(Message msg) {
+        public void handleMessage(Message msg) {
     		
             // Get an actual reference to the DownloadActivity
             // from the WeakReference.
