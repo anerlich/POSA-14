@@ -131,7 +131,7 @@ public class EditStoryActivity extends StoryActivityBase {
 		longitudeET = (EditText) findViewById(R.id.story_edit_longitude);
 		
 		// set the EditTexts to this Story's Values
-		setValuesToDefault();  // Line 134
+		setValuesToDefault();  // Line 134 NOT THIS
 
 	}
 

@@ -45,9 +45,12 @@ public class LoginActivity extends StoryActivityBase{
 	 * Get the file used for storing login credentials
 	 */
 	public static File getLoginFile (Context context) {
+		// ASSIGNMENT - change security level from MAX_SECURITY (which in this app translates to not secure at all)
+		// to StorageUtilities.SECURITY_PRIVATE
 		return StorageUtilities.getOutputMediaFile(context, 	// Line 48
 				StorageUtilities.MEDIA_TYPE_TEXT, 
-				MAX_SECURITY, 
+				//MAX_SECURITY, 
+				StorageUtilities.SECURITY_PRIVATE,
 				"login.txt");
 	}
 	
