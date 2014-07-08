@@ -6,9 +6,11 @@ import java.util.concurrent.Executors;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.util.Log;
 
 /**
  * @class ThreadPoolDownloadService
@@ -43,8 +45,7 @@ public class ThreadPoolDownloadService extends Service {
     /**
      * Hook method called when the Service is created.
      */
-    @Override
-	public void onCreate() {
+    public void onCreate() {
         // TODO - You fill in here to replace null with a new
         // FixedThreadPool Executor that's configured to use
         // MAX_THREADS. Use a factory method in the Executors class.
@@ -74,36 +75,36 @@ public class ThreadPoolDownloadService extends Service {
         // invocation of the appropriate factory method in
         // DownloadUtils that makes a MessengerIntent.
 
-        //return null;
         return DownloadUtils.makeMessengerIntent(context, ThreadPoolDownloadService.class, handler, uri);
-
     }
 
     /**
      * Hook method called when a component calls startService() with
      * the proper Intent.
      */
-    @Override
-	public int onStartCommand(final Intent intent,
+    public int onStartCommand(Intent intent,
                               int flags,
                               int startId) {
+        final Intent i = intent;
+        
         // TODO - You fill in here to replace null with a new Runnable
         // that the ThreadPoolExecutor will execute to download the
         // image and respond to the client.  The Runnable's run()
         // method implementation should forward to the appropriate
         // helper method from the DownloadUtils class that downloads
         // the uri in the intent and returns the file's pathname using
-        // a Messenger who's Bundle key is defined by DownloadUtils.MESSENGER_KEY.
-
+        // a Messenger that's named "MESSENGER".
+  
         Runnable downloadRunnable = new Runnable() {
-    		public void run() {
-    	        Messenger messenger = (Messenger)
-    	                intent.getExtras().get(DownloadUtils.MESSENGER_KEY);
+			@Override
+			public void run() {
+				DownloadUtils.downloadAndRespond(ThreadPoolDownloadService.this, i.getData(), (Messenger) i.getExtras().get("MESSENGER") );
+			}
+		};
 
-    	    	DownloadUtils.downloadAndRespond(ThreadPoolDownloadService.this, intent.getData(), messenger);
-    		}
-        };
-
+      
+        
+        
         mExecutor.execute(downloadRunnable);
       
         // Tell the Android framework how to behave if this service is
@@ -118,8 +119,7 @@ public class ThreadPoolDownloadService extends Service {
      * the Service receives informing it to clean up any resources it
      * holds.
      */
-    @Override
-	public void onDestroy() {
+    public void onDestroy() {
     	// Ensure that the threads used by the ThreadPoolExecutor
     	// complete and are reclaimed by the system.
 
@@ -130,8 +130,9 @@ public class ThreadPoolDownloadService extends Service {
      * Return null since this class does not implement a Bound
      * Service.
      */
-    @Override
-	public IBinder onBind (Intent intent) {
+    public IBinder onBind (Intent intent) {
         return null;
     }
+    
+  
 }

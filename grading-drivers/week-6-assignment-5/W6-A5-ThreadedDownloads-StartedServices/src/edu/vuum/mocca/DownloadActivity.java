@@ -3,11 +3,11 @@ package edu.vuum.mocca;
 import java.lang.ref.WeakReference;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -63,38 +63,31 @@ public class DownloadActivity extends DownloadBase {
     	 * @see https://groups.google.com/forum/#!msg/android-developers/1aPZXZG6kWk/lIYDavGYn5UJ
     	 */
     	public MessengerHandler(DownloadActivity outer) {
-            outerClass = new WeakReference<DownloadActivity>(outer);
+    		outerClass = new WeakReference<DownloadActivity>(outer);
     	}
     	
     	// Handle any messages that get sent to this Handler
-    	@Override
-		public void handleMessage(Message msg) {
+    	public void handleMessage(Message msg) {
     		
-            // Get an actual reference to the DownloadActivity
-            // from the WeakReference.
-            final DownloadActivity activity = outerClass.get();
+    		// Get an actual reference to the DownloadActivity
+    		// from the WeakReference.
+    		DownloadActivity activity = outerClass.get();
     		
-            // If DownloadActivity hasn't been garbage collected
-            // (closed by user), display the sent image.
-            if (activity != null) {
-                // TODO - You fill in here to display the image
-                // bitmap that's been downloaded and returned to
-                // the DownloadActivity as a pathname who's Bundle
-            	// key is defined by DownloadUtils.PATHNAME_KEY
-            	Bundle data = msg.getData();
-            	String pathname = data.getString(DownloadUtils.PATHNAME_KEY);
-                if (pathname == null)
-                	Toast.makeText(activity, "Download failed", Toast.LENGTH_SHORT).show();
-                // Display the image in the UI Thread.
-                activity.displayBitmap(pathname);
-
-            }
+    		// If DownloadActivity hasn't been garbage collected
+    		// (closed by user), display the sent image.
+    		if (activity != null) {
+	            // TODO - You fill in here to display the image
+	            // bitmap that's been downloaded and returned to
+	            // the DownloadActivity as a pathname that's named
+	            // "PATHNAME".			 
+    			activity.displayBitmap( msg.getData().getString("PATHNAME") );   			
+                }
     	}
     }
 
     /**
      * Instantiate the MessengerHandler, passing in the
-     * DownloadActivity to be stored as a WeakReference
+     * DownloadActivity to help with garbage collection.
      */
     MessengerHandler handler = new MessengerHandler(this);
     
@@ -117,17 +110,15 @@ public class DownloadActivity extends DownloadBase {
             // TODO - You fill in here to start the
             // DownloadIntentService with the appropriate Intent
             // returned from the makeIntent() factory method.
-        	Intent intentDIS = DownloadIntentService.makeIntent(this, handler, getUrlString());
-        	startService(intentDIS);
-            which = "Starting IntentService";
+        	startService( DownloadIntentService.makeIntent(this, handler, getUrlString() ) );
+        	which = "Starting IntentService";
             break;
         
         case R.id.thread_pool_button:
             // TODO - You fill in here to start the
             // ThreadPoolDownloadService with the appropriate Intent
             // returned from the makeIntent() factory method.
-        	Intent intentTPDS = ThreadPoolDownloadService.makeIntent(this, handler, getUrlString());
-        	startService(intentTPDS);
+        	startService( ThreadPoolDownloadService.makeIntent(this, handler, getUrlString() ) );
             which = "Starting ThreadPoolDownloadService";
             break;
         
@@ -138,5 +129,23 @@ public class DownloadActivity extends DownloadBase {
     	Toast.makeText(this,
                        which,
                        Toast.LENGTH_SHORT).show();
+    }
+
+    /** Called when this activity becomes visible after onStart().
+     * 	Also called when the activity is un-paused.
+     */
+    @Override
+    public void onResume() {
+        // Attach handler to looper.
+    	super.onResume();
+    }
+
+    /**
+     * Called when this activity becomes partially hidden.
+     */
+    @Override
+    public void onPause() {
+        // Remove handler from looper.
+    	super.onPause();    	
     }
 }
